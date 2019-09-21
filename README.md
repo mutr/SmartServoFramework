@@ -1,4 +1,4 @@
-SmartServoFramework 0.98
+SmartServoFramework 0.99
 ========================
 
 [![Build Status](https://travis-ci.org/emericg/SmartServoFramework.svg?branch=master)](https://travis-ci.org/emericg/SmartServoFramework)
@@ -16,7 +16,7 @@ SmartServoFramework is a C++ multi-platform framework used to drive "smart servo
 > Dynamixel devices from [Robotis](http://www.robotis.com/) and HerkuleX devices from [Dongbu Robot](http://www.dongburobot.com/) are high-performance networked actuators for robots available in wide range of sizes and strengths.  
 > They have adjustable torque, speed, angle limits, and provide various feedback like position, load, voltage and temperature...
 
-This framework **can be used with any Dynamixel or HerkuleX devices**. We support all models of HerkuleX from the DRS-0101 up to the DRS-0602. For Dynamixel that means AX, EX, MX, XL-320, X serie, as well as the older RX and DX series. We even have support for the AX-S1 and IR sensor array! Please note that the Dynamixel PRO devices *should* work (the version 2 of the communication protocol is implemented, and works great with X serie), but they are considered as experimental since we couldn't test with any real device.  
+This framework **can be used with any Dynamixel or HerkuleX devices**. We support all models of HerkuleX from the DRS-0101 up to the DRS-0602. For Dynamixel that means AX, EX, MX, XL-320, X series, as well as the older RX and DX series. We even have support for the AX-S1 and IR sensor array! Please note that the Dynamixel PRO devices *should* work (the version 2 of the communication protocol is implemented, and works great with X serie), but they are considered as experimental since we couldn't test with any real device.  
 Support for other devices, brands or protocols may be added in the futur...
 
 We provide two different APIs:
@@ -118,16 +118,16 @@ SmartServoGui is a fully featured Qt GUI application that helps you discover dev
 
 ### Developers
 
-You can browse the code here on GitHub, submit patches and pull requests! Your help would be greatly appreciated ;-)
+You can browse the code on the GitHub page, submit patches and pull requests! Your help would be greatly appreciated ;-)
 
 ### Users
 
-You can help us finding bugs, proposing new features and more! Visit the "Issues" section in the GitHub menu to start.
+You can help us find and report bugs, propose new features, help with the documentation and more! Visit the Issues section of the GitHub page to start!
 
-## Licensing
+## License
 
-SmartServoFramework is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
-[Consult the licence on the FSF website](http://www.gnu.org/licenses/lgpl-3.0.txt).
+SmartServoFramework is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.  
+Read the [LICENSE](LICENSE) file or [consult the license on the FSF website](https://www.gnu.org/licenses/lgpl-3.0.txt) directly.
 
 Copyright (c) 2014, INRIA, All rights reserved.  
 Emeric Grange <emeric.grange@gmail.com>  

@@ -103,8 +103,7 @@ MainWindow::MainWindow(QWidget *parent):
 
     // Setting window
     stw = new Settings();
-    stw->readSettings();
-    stw->loadSettings();
+    connect(stw, &Settings::settingsSaved, this, &MainWindow::reloadPortSettings);
 
 #ifdef Q_OS_OSX
     ui->toolBar->setStyleSheet("");
@@ -262,6 +261,8 @@ void MainWindow::scanSerialPorts(bool autoScanDevices)
     ui->frameDevices->setDisabled(true);
     helpScreen(true);
 
+    stw->reloadPorts();
+
     // Clean the deviceTreeWidget content
     while (QWidget *item = ui->deviceTreeWidget->childAt(0,0))
     {
@@ -334,9 +335,12 @@ void MainWindow::scanSerialPorts(bool autoScanDevices)
     {
         ui->serialPortErrors_label->show();
 
-        QTreeWidgetItem *port = new QTreeWidgetItem();
-        port->setText(0, tr("No serial port available!"));
-        ui->deviceTreeWidget->addTopLevelItem(port);
+        QTreeWidgetItem *port = new QTreeWidgetItem;
+        if (port)
+        {
+            port->setText(0, tr("No serial port available!"));
+            ui->deviceTreeWidget->addTopLevelItem(port);
+        }
     }
     else
     {
@@ -356,10 +360,13 @@ void MainWindow::scanSerialPorts(bool autoScanDevices)
             // search for saved settings
             if (stw)
             {
-                portConfig *pc = stw->getSerialPortConfig(p);
+                const portConfig *pc = stw->getSerialPortConfig(helper->deviceName_qstr);
                 if (pc)
                 {
-                    helper->deviceWidget->setSavedParameters(pc->protocol, pc->speed);
+                    helper->deviceWidget->setSavedParameters(pc->protocol,
+                                                             pc->speed,
+                                                             pc->firstAddress,
+                                                             pc->lastAddress);
                 }
             }
 
@@ -368,14 +375,20 @@ void MainWindow::scanSerialPorts(bool autoScanDevices)
             ui->verticalLayout_2->layout()->addWidget(helper->deviceWidget);
             ui->verticalLayout_2->update();
 
-            QTreeWidgetItem *port = new QTreeWidgetItem();
-            ui->deviceTreeWidget->addTopLevelItem(port);
-            port->setText(0, helper->deviceName_qstr);
-            QString scan_entry_txt = tr("(Not scanned)");
-            QTreeWidgetItem *scan_entry = new QTreeWidgetItem();
-            scan_entry->setText(0, scan_entry_txt);
-            port->setExpanded(true);
-            port->addChild(scan_entry);
+            QTreeWidgetItem *port = new QTreeWidgetItem;
+            if (port)
+            {
+                ui->deviceTreeWidget->addTopLevelItem(port);
+                port->setText(0, helper->deviceName_qstr);
+                QString scan_entry_txt = tr("(Not scanned)");
+                QTreeWidgetItem *scan_entry = new QTreeWidgetItem;
+                if (scan_entry)
+                {
+                    scan_entry->setText(0, scan_entry_txt);
+                    port->setExpanded(true);
+                    port->addChild(scan_entry);
+                }
+            }
         }
 
         // Update the GUI before each servo scan
@@ -836,15 +849,15 @@ int MainWindow::getCurrentServo(ServoController *&ctrl, int &id)
             // Extract servo id (the hard way...)
             if (item->text(0).lastIndexOf("]") == 3)
             {
-                sid = item->text(0).midRef(2, 1).toString().toUInt();
+                sid = item->text(0).midRef(2, 1).toString().toInt();
             }
             else if (item->text(0).lastIndexOf("]") == 4)
             {
-                sid = item->text(0).midRef(2, 2).toString().toUInt();
+                sid = item->text(0).midRef(2, 2).toString().toInt();
             }
             else if (item->text(0).lastIndexOf("]") == 5)
             {
-                sid = item->text(0).midRef(2, 3).toString().toUInt();
+                sid = item->text(0).midRef(2, 3).toString().toInt();
             }
 
             // Print status?
@@ -924,15 +937,15 @@ int MainWindow::getCurrentServo(Servo *&servo)
             // Extract servo id (the hard way...)
             if (item->text(0).lastIndexOf("]") == 3)
             {
-                sid = item->text(0).midRef(2, 1).toString().toUInt();
+                sid = item->text(0).midRef(2, 1).toString().toInt();
             }
             else if (item->text(0).lastIndexOf("]") == 4)
             {
-                sid = item->text(0).midRef(2, 2).toString().toUInt();
+                sid = item->text(0).midRef(2, 2).toString().toInt();
             }
             else if (item->text(0).lastIndexOf("]") == 5)
             {
-                sid = item->text(0).midRef(2, 3).toString().toUInt();
+                sid = item->text(0).midRef(2, 3).toString().toInt();
             }
 
             // Print status?
@@ -970,6 +983,7 @@ int MainWindow::getCurrentServo(Servo *&servo)
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
+    Q_UNUSED(event);
     resizeTabWidgetContent();
 }
 
@@ -2113,5 +2127,12 @@ void MainWindow::modifier(int row, int column)
                 }
             }
         }
+    }
+}
+
+void MainWindow::reloadPortSettings()
+{
+    for (SerialPortHelper *helper : serialPorts) {
+        helper->deviceWidget->loadSavedParameters();
     }
 }
