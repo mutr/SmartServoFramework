@@ -92,7 +92,7 @@ int serialPortsScanner(std::vector <std::string> &availableSerialPorts)
 
                 // Used to validate existing serial port availability
                 struct serial_struct serinfo;
-                if (ioctl(fd, TIOCGSERIAL, &serinfo) > -1)
+                if (ioctl(fd, TIOCGSERIAL, &serinfo) > -2)
                 {
                     TRACE_INFO(SERIAL, "- Scanning for serial port on '%s' > FOUND", portPath.c_str());
                     availableSerialPorts.push_back(portPath);
